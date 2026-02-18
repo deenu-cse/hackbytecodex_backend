@@ -1,0 +1,80 @@
+# =========================
+# ENV FILES
+# =========================
+.env
+.env.local
+.env.development
+.env.production
+
+
+# =========================
+# NODE
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# =========================
+# BUILD OUTPUT
+# =========================
+dist/
+build/
+.out/
+coverage/
+
+
+# =========================
+# LOGS
+# =========================
+logs/
+*.log
+
+
+# =========================
+# CACHE
+# =========================
+.cache/
+.tmp/
+.eslintcache
+
+
+# =========================
+# OS FILES
+# =========================
+.DS_Store
+Thumbs.db
+
+
+# =========================
+# IDE / EDITOR
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+
+# =========================
+# DATABASE
+# =========================
+*.sqlite
+*.db
+
+
+# =========================
+# UPLOADS / TEMP FILES
+# =========================
+uploads/
+temp/
+public/uploads/
+
+
+# =========================
+# SECRETS / KEYS
+# =========================
+*.pem
+*.key
+*.crt

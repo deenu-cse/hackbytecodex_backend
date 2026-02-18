@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body{
+            font-family: Arial;
+            background:#f5f7fb;
+            padding:20px;
+        }
+        .card{
+            background:white;
+            padding:25px;
+            border-radius:10px;
+        }
+        .title{
+            font-size:20px;
+            font-weight:bold;
+            color:#333;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+    <div class="title">
+        New College Request Received
+    </div>
+
+    <p><strong>College Name:</strong> <%= collegeName %></p>
+
+    <p>
+        Requested At:
+        <%= new Date(requestedAt).toLocaleString() %>
+    </p>
+
+</div>
+
+</body>
+</html>
