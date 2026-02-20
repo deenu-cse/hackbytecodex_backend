@@ -28,7 +28,7 @@ router.put(
 
 router.get(
   '/code/:collegeCode',
-  verifyToken([USER_TYPE.SUPER_ADMIN]),
+  verifyToken([USER_TYPE.SUPER_ADMIN, USER_TYPE.COLLEGE_LEAD, USER_TYPE.STUDENT]),
   getCollegeByCode
 );
 

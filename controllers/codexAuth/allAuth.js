@@ -161,7 +161,7 @@ const login = async (req, res) => {
 const getMe = async (req, res) => {
     try {
         const user = await User.findById(req.user.id)
-            .populate("college.collegeId", "name logo location")
+            .populate("college.collegeId", "name logo location code")
             .populate("clubs.clubId", "name logo");
 
         if (!user) {
