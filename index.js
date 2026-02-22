@@ -18,7 +18,8 @@ app.use(cors({
         'http://localhost:3001',
         'http://localhost:3002',
         'https://hackbytecodex.vercel.app',
-        'https://dashboardhackbytecodex.vercel.app'
+        'https://dashboardhackbytecodex.vercel.app',
+        'https://www.hackbytecodex.com'
     ]
 }));
 
