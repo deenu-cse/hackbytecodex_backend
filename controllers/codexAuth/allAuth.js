@@ -3,6 +3,7 @@ const User = require('../../models/user')
 const { USER_TYPE } = require('../../constants/allConstant');
 const { createToken } = require('../../middlewares/authMiddlewares/createToken');
 const College = require('../../models/college');
+const sendEmail = require('../../utils/sendEmail');
 
 const codexReg = async (req, res) => {
     try {
@@ -62,6 +63,19 @@ const codexReg = async (req, res) => {
         });
 
         const token = createToken(user);
+
+        sendEmail({
+            to: user.email,
+            subject: "Welcome to HackByteCodex!",
+            template: "welcome",
+            data: {
+                fullName: user.fullName,
+                email: user.email,
+                dashboardUrl: "#",
+                contactEmail: process.env.SUPPORT_EMAIL || "support@hackbytecodex.com",
+                contactPhone: process.env.SUPPORT_PHONE || "+91-6378837030"
+            }
+        }).catch(err => console.error("Welcome Email Error:", err));
 
         return res.status(201).json({
             success: true,

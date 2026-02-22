@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f7fb; padding: 20px; }
+        .card { background: #ffffff; padding: 30px; border-radius: 12px; max-width: 600px; margin: auto; }
+        .header { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); padding: 20px; border-radius: 8px 8px 0 0; color: #fff; text-align: center; }
+        .header h1 { margin: 0; font-size: 26px; }
+        .content { color: #333333; line-height: 1.6; }
+        .btn { display: inline-block; padding: 12px 24px; margin-top: 20px; background: #2575fc; color: #ffffff; text-decoration: none; border-radius: 6px; }
+        .footer { margin-top: 30px; font-size: 12px; color: #777777; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <h1>Welcome to HackByteCodex!</h1>
+    </div>
+
+    <div class="content">
+        <p>Hi <strong><%= fullName %></strong>,</p>
+
+        <p>We're excited to have you on board. Your account has been created successfully and you can now explore everything HackByteCodex has to offer.</p>
+
+        <p><strong>Your login email:</strong> <%= email %></p>
+
+        <p>Click the button below to access your personal dashboard and start your journey:</p>
+
+        <p style="text-align:center;"><a href="<%= dashboardUrl %>" class="btn">Go to Dashboard</a></p>
+
+        <p>If you have any questions or need help, feel free to reach out:</p>
+        <p>Email: <a href="mailto:<%= contactEmail %>"><%= contactEmail %></a><br>
+           Phone: <%= contactPhone %></p>
+
+        <p>Enjoy coding &amp; competing!</p>
+        <p>The HackByteCodex Team</p>
+    </div>
+
+    <div class="footer">
+        <p>&copy; <%= new Date().getFullYear() %> HackByteCodex. All rights reserved.</p>
+    </div>
+</div>
+
+</body>
+</html>
