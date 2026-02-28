@@ -112,6 +112,13 @@ const collegeSchema = new mongoose.Schema({
 
 collegeSchema.index({ name: 1, code: 1 });
 collegeSchema.index({ status: 1 });
+collegeSchema.index({ "address.city": 1 });
+collegeSchema.index({ "address.state": 1 });
+collegeSchema.index({ "performance.tier": 1 });
+collegeSchema.index({ "performance.score": -1 });
+collegeSchema.index({ "performance.rating": -1 });
+collegeSchema.index({ isVerified: 1 });
+collegeSchema.index({ createdAt: -1 });
 collegeSchema.index({
   name: "text",
   code: "text",

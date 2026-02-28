@@ -5,6 +5,7 @@ const clubRoutes = require('./clubs')
 const collegeLead = require('./collegeLead')
 const publicRoutes = require('./public/events')
 const projectRoutes = require('./public/project')
+const collegePublicRoutes = require('./public/college')
 const judgeRoutes = require('./judge')
 const router = express.Router();
 
@@ -17,5 +18,6 @@ router.use('/', collegeLead)
 router.use('/user', publicRoutes)
 router.use('/', judgeRoutes);
 router.use('/', projectRoutes);
+router.use('/public', collegePublicRoutes);
 
 module.exports = router;
