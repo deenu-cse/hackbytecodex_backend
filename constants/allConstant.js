@@ -5,8 +5,12 @@ const JWT = {
     CLUB_ADMIN_SECRET: process.env.CLUB_ADMIN_SECRET,
     MENTOR_SECRET: process.env.MENTOR_SECRET,
     STUDENT_SECRET: process.env.STUDENT_SECRET,
+    EPU_SECRET: process.env.EPU_SECRET,
+    API_JUDGE_SECRET: process.env.API_JUDGE_SECRET,
 
-    EXPIRE_IN: process.env.JWT_EXPIRE_IN || "7d"
+    EXPIRE_IN: process.env.JWT_EXPIRE_IN || "7d",
+    EPU_EXPIRE_IN: process.env.EPU_JWT_EXPIRE_IN || "30d",
+    API_JUDGE_EXPIRE_IN: process.env.API_JUDGE_JWT_EXPIRE_IN || "1d"
 };
 
 const USER_TYPE = {
@@ -15,7 +19,9 @@ const USER_TYPE = {
     COLLEGE_LEAD: "COLLEGE_LEAD",
     CLUB_ADMIN: "CLUB_ADMIN",
     MENTOR: "MENTOR",
-    STUDENT: "STUDENT"
+    STUDENT: "STUDENT",
+    EVENT_PLATFORM_USER: "EVENT_PLATFORM_USER",
+    API_JUDGE: "API_JUDGE"
 };
 
 const ROLE_JWT_SECRET_MAP = {
@@ -24,7 +30,53 @@ const ROLE_JWT_SECRET_MAP = {
     [USER_TYPE.COLLEGE_LEAD]: JWT.COLLEGE_LEAD_SECRET,
     [USER_TYPE.CLUB_ADMIN]: JWT.CLUB_ADMIN_SECRET,
     [USER_TYPE.MENTOR]: JWT.MENTOR_SECRET,
-    [USER_TYPE.STUDENT]: JWT.STUDENT_SECRET
+    [USER_TYPE.STUDENT]: JWT.STUDENT_SECRET,
+    [USER_TYPE.EVENT_PLATFORM_USER]: JWT.EPU_SECRET,
+    [USER_TYPE.API_JUDGE]: JWT.API_JUDGE_SECRET
+};
+
+const API_TIER = {
+    BASIC: "BASIC",
+    PRO: "PRO",
+    ENTERPRISE: "ENTERPRISE"
+};
+
+const API_TIER_LIMITS = {
+    [API_TIER.BASIC]: {
+        eventsPerMonth: 5,
+        regsPerEvent: 100,
+        judgesPerEvent: 3,
+        analyticsLevel: "BASIC",
+        rateLimit: 30,
+        keyExpiryDays: 30
+    },
+    [API_TIER.PRO]: {
+        eventsPerMonth: 25,
+        regsPerEvent: 1000,
+        judgesPerEvent: 15,
+        analyticsLevel: "FULL",
+        rateLimit: 120,
+        keyExpiryDays: 90
+    },
+    [API_TIER.ENTERPRISE]: {
+        eventsPerMonth: null,
+        regsPerEvent: null,
+        judgesPerEvent: null,
+        analyticsLevel: "FULL",
+        rateLimit: 500,
+        keyExpiryDays: 365
+    }
+};
+
+const API_PLAN_PRICING = {
+    [API_TIER.BASIC]: { monthly: 49900, yearly: 499900 },
+    [API_TIER.PRO]: { monthly: 199900, yearly: 1999900 },
+    [API_TIER.ENTERPRISE]: { monthly: 599900, yearly: 5999900 }
+};
+
+const ANALYTICS_LEVEL_HIERARCHY = {
+    BASIC: 1,
+    FULL: 2
 };
 
 const PERFORMANCE_RULES = {
@@ -107,6 +159,10 @@ module.exports = {
     JWT,
     ROLE_JWT_SECRET_MAP,
     USER_TYPE,
+    API_TIER,
+    API_TIER_LIMITS,
+    API_PLAN_PRICING,
+    ANALYTICS_LEVEL_HIERARCHY,
     PERFORMANCE_RULES,
     BADGES,
     REWARD_TIERS,

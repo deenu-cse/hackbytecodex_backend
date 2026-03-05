@@ -20,6 +20,7 @@ const injectData = (html, data) => {
 const sendEmail = async ({ to, subject, template, data = {} }) => {
   try {
 
+    console.log('tememeap', template)
     const templatePath = path.join(
       process.cwd(),
       "emails",         

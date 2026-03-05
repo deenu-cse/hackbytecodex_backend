@@ -11,6 +11,9 @@ const app = express();
 connectDB();
 
 app.use(morgan('dev'));
+
+app.use('/api-platform/billing/webhook', express.raw({ type: 'application/json' }));
+
 app.use(express.json());
 app.use(cors({
     origin:[
@@ -19,8 +22,10 @@ app.use(cors({
         'http://localhost:3002',
         'https://hackbytecodex.vercel.app',
         'https://dashboardhackbytecodex.vercel.app',
-        'https://www.hackbytecodex.com'
-    ]
+        'https://www.hackbytecodex.com',
+        process.env.PLATFORM_DASHBOARD_URL,
+        process.env.JUDGE_PANEL_URL
+    ].filter(Boolean)
 }));
 
 app.use((req,res,next)=>{

@@ -27,41 +27,33 @@ const getAllColleges = async (req, res) => {
             fields
         } = req.query;
 
-        // Parse pagination
         page = Math.max(1, parseInt(page));
         limit = Math.min(50, Math.max(1, parseInt(limit)));
         const skip = (page - 1) * limit;
 
-        // Build match stage
         let match = {};
 
-        // Status filter (default to ACTIVE for public view)
         if (status) {
             match.status = status;
         }
 
-        // Verification filter
         if (isVerified !== undefined) {
             match.isVerified = isVerified === "true";
         }
 
-        // Text search on name, code, city, state
         if (search?.trim()) {
             match.$text = { $search: search.trim() };
         }
-
-        // Location filters
         if (city) {
             match["address.city"] = { $regex: city, $options: "i" };
         }
         if (state) {
             match["address.state"] = { $regex: state, $options: "i" };
         }
-        if (country) {
+        if (country && country !== "all") {
             match["address.country"] = { $regex: country, $options: "i" };
         }
 
-        // Performance filters
         if (tier) {
             match["performance.tier"] = tier.toUpperCase();
         }
@@ -74,7 +66,6 @@ const getAllColleges = async (req, res) => {
             match["performance.rating"] = { $gte: parseFloat(minRating) };
         }
 
-        // Build sort stage
         let sort = {};
         const order = sortOrder === "asc" ? 1 : -1;
 
@@ -101,12 +92,10 @@ const getAllColleges = async (req, res) => {
                 sort["performance.score"] = -1;
         }
 
-        // Add secondary sort by name for consistency
         if (sortBy !== "name") {
             sort.name = 1;
         }
 
-        // Build projection
         let projection = {
             name: 1,
             code: 1,
@@ -119,10 +108,11 @@ const getAllColleges = async (req, res) => {
             isVerified: 1,
             status: 1,
             createdAt: 1,
-            updatedAt: 1
+            updatedAt: 1,
+            membersCount: 1,
+            eventsHosted: 1
         };
 
-        // Custom field selection
         if (fields) {
             const selectedFields = fields.split(",").reduce((acc, field) => {
                 acc[field.trim()] = 1;
@@ -131,9 +121,46 @@ const getAllColleges = async (req, res) => {
             projection = { ...projection, ...selectedFields };
         }
 
-        // Execute aggregation
         const colleges = await College.aggregate([
             { $match: match },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { collegeId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$college.collegeId", "$$collegeId"] },
+                                status: "ACTIVE"
+                            }
+                        },
+                        { $count: "total" }
+                    ],
+                    as: "membersCount"
+                }
+            },
+            {
+                $lookup: {
+                    from: "events",
+                    let: { collegeId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$college.collegeId", "$$collegeId"] },
+                                status: { $in: ["ACTIVE", "COMPLETED"] }
+                            }
+                        },
+                        { $count: "total" }
+                    ],
+                    as: "eventsCount"
+                }
+            },
+            {
+                $addFields: {
+                    membersCount: { $ifNull: [{ $arrayElemAt: ["$membersCount.total", 0] }, 0] },
+                    eventsHosted: { $ifNull: [{ $arrayElemAt: ["$eventsCount.total", 0] }, 0] }
+                }
+            },
             { $sort: sort },
             {
                 $facet: {
@@ -143,21 +170,18 @@ const getAllColleges = async (req, res) => {
                         { $project: projection }
                     ],
                     totalCount: [{ $count: "count" }],
-                    // Get unique cities for filter options
                     cities: [
                         { $group: { _id: "$address.city", count: { $sum: 1 } } },
-                        { $match: { _id: { $ne: null } } },
+                        { $match: { _id: { $ne: null, $ne: "" } } },
                         { $sort: { count: -1 } },
                         { $limit: 20 }
                     ],
-                    // Get unique states for filter options
                     states: [
                         { $group: { _id: "$address.state", count: { $sum: 1 } } },
-                        { $match: { _id: { $ne: null } } },
+                        { $match: { _id: { $ne: null, $ne: "" } } },
                         { $sort: { count: -1 } },
                         { $limit: 20 }
                     ],
-                    // Tier distribution
                     tiers: [
                         { $group: { _id: "$performance.tier", count: { $sum: 1 } } }
                     ]
@@ -168,7 +192,6 @@ const getAllColleges = async (req, res) => {
         const result = colleges[0];
         const total = result.totalCount[0]?.count || 0;
 
-        // Format filter options
         const filters = {
             cities: result.cities.map(c => ({ name: c._id, count: c.count })),
             states: result.states.map(s => ({ name: s._id, count: s.count })),

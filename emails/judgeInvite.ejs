@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f7fb; padding: 20px; }
+        .card { background: #ffffff; padding: 30px; border-radius: 12px; max-width: 600px; margin: auto; }
+        .header { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 20px; border-radius: 8px 8px 0 0; color: #fff; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .content { color: #333333; line-height: 1.6; }
+        .credential-box { background: #f0f4ff; border: 1px solid #d0d9f0; border-radius: 8px; padding: 16px; margin: 16px 0; }
+        .credential-box p { margin: 4px 0; }
+        .btn { display: inline-block; padding: 12px 24px; margin-top: 20px; background: #f5576c; color: #ffffff; text-decoration: none; border-radius: 6px; }
+        .info-box { background: #e8f4fd; border: 1px solid #b6d4fe; border-radius: 6px; padding: 12px; margin: 16px 0; font-size: 13px; color: #084298; }
+        .footer { margin-top: 30px; font-size: 12px; color: #777777; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <h1>You're Invited to Judge!</h1>
+    </div>
+
+    <div class="content">
+        <p>Hi <strong><%= judgeName %></strong>,</p>
+
+        <p>You have been invited to be a judge for <strong><%= eventName %></strong>.</p>
+
+        <div class="info-box">
+            <p><strong>Event:</strong> <%= eventName %></p>
+            <p><strong>Organized by:</strong> <%= organizerName %></p>
+            <p><strong>Date:</strong> <%= eventDate %></p>
+        </div>
+
+        <p>Use the credentials below to log into the Judge Panel:</p>
+
+        <div class="credential-box">
+            <p><strong>Email:</strong> (your email)</p>
+            <p><strong>Temporary Password:</strong> <%= tempPassword %></p>
+        </div>
+
+        <p style="text-align:center;">
+            <a href="<%= judgeLoginUrl %>" class="btn">Open Judge Panel</a>
+        </p>
+
+        <p>Please keep your credentials safe and do not share them with anyone.</p>
+
+        <p>The HackByteCodex Team</p>
+    </div>
+
+    <div class="footer">
+        <p>&copy; <%= new Date().getFullYear() %> HackByteCodex. All rights reserved.</p>
+    </div>
+</div>
+
+</body>
+</html>

@@ -105,7 +105,7 @@ const collegeSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ["PENDING", "ACTIVE", "SUSPENDED"],
-    default: "PENDING"
+    default: "ACTIVE"
   }
 
 }, { timestamps: true });

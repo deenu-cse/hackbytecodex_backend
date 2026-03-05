@@ -7,6 +7,7 @@ const publicRoutes = require('./public/events')
 const projectRoutes = require('./public/project')
 const collegePublicRoutes = require('./public/college')
 const judgeRoutes = require('./judge')
+const apiPlatformRoutes = require('./apiPlatform')
 const router = express.Router();
 
 console.log('route wala index.js')
@@ -19,5 +20,6 @@ router.use('/user', publicRoutes)
 router.use('/', judgeRoutes);
 router.use('/', projectRoutes);
 router.use('/public', collegePublicRoutes);
+router.use('/api-platform', apiPlatformRoutes);
 
 module.exports = router;

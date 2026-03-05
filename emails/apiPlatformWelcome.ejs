@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f7fb; padding: 20px; }
+        .card { background: #ffffff; padding: 30px; border-radius: 12px; max-width: 600px; margin: auto; }
+        .header { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); padding: 20px; border-radius: 8px 8px 0 0; color: #fff; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .content { color: #333333; line-height: 1.6; }
+        .credential-box { background: #f0f4ff; border: 1px solid #d0d9f0; border-radius: 8px; padding: 16px; margin: 16px 0; }
+        .credential-box p { margin: 4px 0; }
+        .api-key-box { background: #1a1a2e; color: #e0e0e0; border-radius: 8px; padding: 16px; margin: 16px 0; word-break: break-all; font-family: monospace; font-size: 13px; }
+        .badge { display: inline-block; background: #2575fc; color: #fff; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+        .btn { display: inline-block; padding: 12px 24px; margin-top: 20px; background: #2575fc; color: #ffffff; text-decoration: none; border-radius: 6px; }
+        .warning { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin: 16px 0; font-size: 13px; color: #856404; }
+        .footer { margin-top: 30px; font-size: 12px; color: #777777; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <h1>Your Event Platform Account is Ready!</h1>
+    </div>
+
+    <div class="content">
+        <p>Hi <strong><%= fullName %></strong>,</p>
+
+        <p>Your Event Platform subscription has been activated. You can now create events, manage registrations, and invite judges through your dedicated dashboard.</p>
+
+        <p>Plan: <span class="badge"><%= tier %></span></p>
+
+        <div class="credential-box">
+            <p><strong>Platform ID:</strong> <%= platformId %></p>
+            <p><strong>Temporary Password:</strong> <%= tempPassword %></p>
+        </div>
+
+        <p><strong>Your API Key:</strong></p>
+        <div class="api-key-box"><%= apiKey %></div>
+
+        <div class="warning">
+            <strong>Important:</strong> Save your API key now. It will not be shown again. Change your temporary password after first login.
+        </div>
+
+        <p style="text-align:center;">
+            <a href="<%= loginUrl %>" class="btn">Go to Dashboard</a>
+        </p>
+
+        <p>The HackByteCodex Team</p>
+    </div>
+
+    <div class="footer">
+        <p>&copy; <%= new Date().getFullYear() %> HackByteCodex. All rights reserved.</p>
+    </div>
+</div>
+
+</body>
+</html>
