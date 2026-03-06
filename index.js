@@ -16,16 +16,21 @@ app.use('/api-platform/billing/webhook', express.raw({ type: 'application/json' 
 
 app.use(express.json());
 app.use(cors({
-    origin:[
+    origin: [
         'http://localhost:3000',
         'http://localhost:3001',
         'http://localhost:3002',
         'https://hackbytecodex.vercel.app',
         'https://dashboardhackbytecodex.vercel.app',
         'https://www.hackbytecodex.com',
+        'https://hackbytecodex.com',
         process.env.PLATFORM_DASHBOARD_URL,
         process.env.JUDGE_PANEL_URL
-    ].filter(Boolean)
+    ].filter(Boolean),
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key'],
+    credentials: true,
+    optionsSuccessStatus: 200
 }));
 
 app.use((req,res,next)=>{
@@ -41,6 +46,22 @@ console.log('main index.js ')
 app.get('/', (req, res) => {
     res.send(`Hello, From ${process.env.APP_NAME} backend!`);
 })
+
+// Global error handler for better debugging
+app.use((err, req, res, next) => {
+    console.error('Global Error Handler:', err);
+    console.error('Error Stack:', err.stack);
+    console.error('Request Path:', req.path);
+    console.error('Request Method:', req.method);
+    
+    res.status(err.status || 500).json({
+        success: false,
+        message: process.env.NODE_ENV === 'production' 
+            ? 'Internal server error' 
+            : err.message,
+        error: process.env.NODE_ENV === 'production' ? undefined : err
+    });
+});
 
 const PORT = process.env.PORT || 5000;
 

@@ -5,6 +5,14 @@ const ejs = require("ejs");
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Validate required environment variables
+if (!process.env.RESEND_API_KEY) {
+    console.warn('WARNING: RESEND_API_KEY is not configured. Email sending will fail.');
+}
+if (!process.env.EMAIL_FROM) {
+    console.warn('WARNING: EMAIL_FROM is not configured. Email sending will fail.');
+}
+
 const injectData = (html, data) => {
   let updatedHtml = html;
 

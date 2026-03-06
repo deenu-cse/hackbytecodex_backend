@@ -157,8 +157,12 @@ const getAllColleges = async (req, res) => {
             },
             {
                 $addFields: {
-                    membersCount: { $ifNull: [{ $arrayElemAt: ["$membersCount.total", 0] }, 0] },
-                    eventsHosted: { $ifNull: [{ $arrayElemAt: ["$eventsCount.total", 0] }, 0] }
+                    membersCount: { 
+                        $ifNull: [{ $arrayElemAt: ["$membersCount.total", 0] }, 0] 
+                    },
+                    eventsHosted: { 
+                        $ifNull: [{ $arrayElemAt: ["$eventsCount.total", 0] }, 0] 
+                    }
                 }
             },
             { $sort: sort },
@@ -167,7 +171,13 @@ const getAllColleges = async (req, res) => {
                     data: [
                         { $skip: skip },
                         { $limit: limit },
-                        { $project: projection }
+                        { 
+                            $project: {
+                                ...projection,
+                                membersCount: 1,
+                                eventsHosted: 1
+                            }
+                        }
                     ],
                     totalCount: [{ $count: "count" }],
                     cities: [
