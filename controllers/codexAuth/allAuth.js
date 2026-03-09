@@ -279,5 +279,90 @@ const getAllColleges = async (req, res) => {
     }
 };
 
+const getAllUsers = async (req, res) => {
+    try {
+        let {
+            page = 1,
+            limit = 20,
+            search = "",
+            role,
+            collegeId,
+            status,
+            verified,
+            sortBy = "createdAt",
+            order = "desc"
+        } = req.query;
 
-module.exports = { codexReg, login, getMe, getAllColleges }
+        page = parseInt(page);
+        limit = Math.min(parseInt(limit), 100);
+        const skip = (page - 1) * limit;
+
+        const filter = {};
+
+        // Search by name or email
+        if (search) {
+            filter.$or = [
+                { fullName: { $regex: search, $options: "i" } },
+                { email: { $regex: search, $options: "i" } }
+            ];
+        }
+
+        // Filter by role
+        if (role && Object.values(USER_TYPE).includes(role)) {
+            filter.role = role;
+        }
+
+        // Filter by college
+        if (collegeId) {
+            filter["college.collegeId"] = collegeId;
+        }
+
+        // Filter by verification status
+        if (verified !== undefined) {
+            filter.isVerified = verified === "true";
+        }
+
+        // Filter by account status
+        if (status) {
+            filter.status = status;
+        }
+
+        const sort = {
+            [sortBy]: order === "asc" ? 1 : -1
+        };
+
+        const [users, total] = await Promise.all([
+            User.find(filter)
+                .select("-password")
+                .populate("college.collegeId", "name code logo")
+                .sort(sort)
+                .skip(skip)
+                .limit(limit),
+            User.countDocuments(filter)
+        ]);
+
+        return res.status(200).json({
+            success: true,
+            data: users,
+            pagination: {
+                total,
+                page,
+                pages: Math.ceil(total / limit),
+                limit,
+                hasNextPage: page < Math.ceil(total / limit),
+                hasPrevPage: page > 1
+            }
+        });
+
+    } catch (error) {
+        console.error("Get All Users Error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error while fetching users",
+            error: process.env.NODE_ENV === "development" ? error.message : undefined
+        });
+    }
+};
+
+
+module.exports = { codexReg, login, getMe, getAllColleges, getAllUsers }

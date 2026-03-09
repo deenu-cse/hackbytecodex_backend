@@ -46,6 +46,38 @@ router.post(
   createEventForm
 );
 
+router.get(
+  "/:eventId/form",
+  verifyToken([USER_TYPE.COLLEGE_LEAD, USER_TYPE.STUDENT, USER_TYPE.SUPER_ADMIN]),
+  async (req, res) => {
+    try {
+      const { eventId } = req.params;
+      const EventForm = require('../../models/eventForm');
+      
+      const form = await EventForm.findOne({ event: eventId });
+      
+      if (!form) {
+        return res.status(404).json({
+          success: false,
+          message: "Form not found"
+        });
+      }
+      
+      return res.status(200).json({
+        success: true,
+        data: form
+      });
+    } catch (err) {
+      console.error("Get Event Form Error:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Server error while fetching event form",
+        error: err.message
+      });
+    }
+  }
+);
+
 router.put(
   "/:eventId/updateform",
   verifyToken([USER_TYPE.COLLEGE_LEAD, USER_TYPE.STUDENT, USER_TYPE.SUPER_ADMIN]),

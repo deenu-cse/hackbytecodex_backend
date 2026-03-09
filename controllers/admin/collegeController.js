@@ -52,7 +52,9 @@ const addCollege = async (req, res) => {
       website,
       logo,
       banners,
-      createdBy: req.user.id
+      createdBy: req.user.id,
+      isVerified: true,
+      status: "ACTIVE"
     });
 
     return res.status(201).json({
@@ -273,7 +275,7 @@ const getUsersByCollege = async (req, res) => {
 
 const assignCollegeLead = async (req, res) => {
   try {
-    const { collegeId, userId } = req.body;
+    const { collegeId, userId, forceReassign } = req.body;
 
     if (!collegeId || !userId) {
       return res.status(400).json({
@@ -290,10 +292,22 @@ const assignCollegeLead = async (req, res) => {
       });
     }
 
-    if (college.collegeLead) {
+    // Check if college already has a lead, but allow force reassignment
+    if (college.collegeLead && !forceReassign) {
       return res.status(409).json({
         success: false,
-        message: "College already has a lead assigned"
+        message: "College already has a lead assigned. Set forceReassign=true to reassign."
+      });
+    }
+
+    // If reassigning, update the old lead's role
+    if (college.collegeLead) {
+      await User.findByIdAndUpdate(college.collegeLead, {
+        $set: {
+          role: USER_TYPE.STUDENT,
+          college: undefined,
+          isVerified: false
+        }
       });
     }
 
@@ -305,10 +319,10 @@ const assignCollegeLead = async (req, res) => {
       });
     }
 
-    if (user.role === USER_TYPE.COLLEGE_LEAD) {
+    if (user.role === USER_TYPE.COLLEGE_LEAD && user.college?.collegeId?.toString() !== collegeId.toString()) {
       return res.status(409).json({
         success: false,
-        message: "User is already a college lead"
+        message: "User is already a college lead for another college"
       });
     }
 

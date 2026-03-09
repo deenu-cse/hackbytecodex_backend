@@ -62,7 +62,8 @@ const addEvent = async (req, res) => {
       location,
       mode,
       registration,
-      timeline
+      timeline,
+      externalLinks
     } = req.body;
 
     if (!title || !eventType || !clubId) {
@@ -107,6 +108,12 @@ const addEvent = async (req, res) => {
       typeof timeline === "string"
         ? JSON.parse(timeline)
         : timeline;
+
+    const parsedExternalLinks = externalLinks
+      ? (typeof externalLinks === "string"
+          ? JSON.parse(externalLinks)
+          : externalLinks)
+      : undefined;
 
     // Parse and validate location
     let parsedLocation;
@@ -194,6 +201,12 @@ const addEvent = async (req, res) => {
       mode,
       registration: parsedRegistration,
       timeline: parsedTimeline,
+      externalLinks: parsedExternalLinks || {
+        website: "",
+        registration: "",
+        referralCode: "",
+        additionalInfo: {}
+      },
       status: "PUBLISHED"
     });
 
@@ -259,7 +272,8 @@ const addGlobalEvent = async (req, res) => {
       mode,
       registration,
       timeline,
-      rewardPoints
+      rewardPoints,
+      externalLinks
     } = req.body;
 
     if (!title || !eventType) {
@@ -288,6 +302,12 @@ const addGlobalEvent = async (req, res) => {
     const parsedRewardPoints = typeof rewardPoints === "string"
       ? JSON.parse(rewardPoints)
       : rewardPoints;
+
+    const parsedExternalLinks = externalLinks
+      ? (typeof externalLinks === "string"
+          ? JSON.parse(externalLinks)
+          : externalLinks)
+      : undefined;
 
     if (parsedTimeline?.length) {
       for (const day of parsedTimeline) {
@@ -325,6 +345,31 @@ const addGlobalEvent = async (req, res) => {
       registration: parsedRegistration,
       timeline: parsedTimeline,
       rewardPoints: parsedRewardPoints || { organizer: 0, participant: 0 },
+      externalLinks: parsedExternalLinks ? {
+        website: parsedExternalLinks.website || "",
+        registration: parsedExternalLinks.registration || "",
+        referralCode: parsedExternalLinks.referralCode || "",
+        additionalInfo: (() => {
+          if (!parsedExternalLinks.additionalInfo) return new Map();
+          const infoMap = new Map();
+          if (typeof parsedExternalLinks.additionalInfo === 'string') {
+            const parsed = JSON.parse(parsedExternalLinks.additionalInfo);
+            Object.entries(parsed).forEach(([key, value]) => {
+              infoMap.set(key, value);
+            });
+          } else if (typeof parsedExternalLinks.additionalInfo === 'object') {
+            Object.entries(parsedExternalLinks.additionalInfo).forEach(([key, value]) => {
+              infoMap.set(key, value);
+            });
+          }
+          return infoMap;
+        })()
+      } : {
+        website: "",
+        registration: "",
+        referralCode: "",
+        additionalInfo: {}
+      },
       status: "PUBLISHED"
     });
 
@@ -473,6 +518,37 @@ const updateGlobalEvent = async (req, res) => {
       event.timeline = typeof req.body.timeline === "string"
         ? JSON.parse(req.body.timeline)
         : req.body.timeline;
+    }
+
+    // Handle external links
+    if (req.body.externalLinks) {
+      const parsedExternalLinks = typeof req.body.externalLinks === "string"
+        ? JSON.parse(req.body.externalLinks)
+        : req.body.externalLinks;
+      
+      if (parsedExternalLinks.website !== undefined) {
+        event.externalLinks.website = parsedExternalLinks.website;
+      }
+      if (parsedExternalLinks.registration !== undefined) {
+        event.externalLinks.registration = parsedExternalLinks.registration;
+      }
+      if (parsedExternalLinks.referralCode !== undefined) {
+        event.externalLinks.referralCode = parsedExternalLinks.referralCode;
+      }
+      if (parsedExternalLinks.additionalInfo !== undefined) {
+        const additionalInfoMap = new Map();
+        if (typeof parsedExternalLinks.additionalInfo === 'string') {
+          const parsed = JSON.parse(parsedExternalLinks.additionalInfo);
+          Object.entries(parsed).forEach(([key, value]) => {
+            additionalInfoMap.set(key, value);
+          });
+        } else if (typeof parsedExternalLinks.additionalInfo === 'object') {
+          Object.entries(parsedExternalLinks.additionalInfo).forEach(([key, value]) => {
+            additionalInfoMap.set(key, value);
+          });
+        }
+        event.externalLinks.additionalInfo = additionalInfoMap;
+      }
     }
 
     await event.save();
@@ -803,6 +879,26 @@ const updateEvent = async (req, res) => {
           : req.body.timeline;
     }
 
+    // Handle external links
+    if (req.body.externalLinks) {
+      const parsedExternalLinks = typeof req.body.externalLinks === "string"
+        ? JSON.parse(req.body.externalLinks)
+        : req.body.externalLinks;
+      
+      if (parsedExternalLinks.website !== undefined) {
+        event.externalLinks.website = parsedExternalLinks.website;
+      }
+      if (parsedExternalLinks.registration !== undefined) {
+        event.externalLinks.registration = parsedExternalLinks.registration;
+      }
+      if (parsedExternalLinks.referralCode !== undefined) {
+        event.externalLinks.referralCode = parsedExternalLinks.referralCode;
+      }
+      if (parsedExternalLinks.additionalInfo !== undefined) {
+        event.externalLinks.additionalInfo = parsedExternalLinks.additionalInfo;
+      }
+    }
+
     const allowedFields = [
       "title",
       "description",
@@ -997,15 +1093,18 @@ const createEventForm = async (req, res) => {
             { new: true, upsert: true }
         );
 
-        if (!event.form || event.form.toString() !== form._id.toString()) {
-            event.form = form._id;
-            await event.save();
-        }
+        // Update the event's form reference
+        event.form = form._id;
+        await event.save();
+
+        // Populate and return the form with event details
+        const populatedForm = await EventForm.findById(form._id);
 
         return res.status(201).json({
             success: true,
             message: "Event form created successfully",
-            data: form
+            data: populatedForm,
+            event: await Event.findById(eventId).populate('form')
         });
 
     } catch (err) {

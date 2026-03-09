@@ -135,6 +135,18 @@ const eventSchema = new mongoose.Schema({
     enum: ["DRAFT", "PUBLISHED", "COMPLETED", "CANCELLED"],
     default: "DRAFT"
   },
+  
+  // ===== EXTERNAL LINKS & ADDITIONAL INFO =====
+  externalLinks: {
+    website: String,
+    registration: String,
+    referralCode: String,
+    additionalInfo: {
+      type: Map,
+      of: String
+    }
+  },
+  
   form: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "EventForm",

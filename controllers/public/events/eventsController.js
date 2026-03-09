@@ -292,6 +292,44 @@ const registerForEvent = async (req, res) => {
             $inc: { "activity.eventsParticipated": 1 }
         });
 
+        // Send registration confirmation email
+        try {
+            const user = await User.findById(userId);
+            const eventLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/events/${event.slug}`;
+            
+            const emailData = {
+                name: user.fullName,
+                eventName: event.title,
+                eventDate: event.startDate ? new Date(event.startDate).toLocaleDateString() : 'TBA',
+                eventMode: event.mode || 'TBA',
+                paymentStatus: registration.payment.status,
+                eventLink: eventLink
+            };
+
+            if (event.location?.name && event.location.name !== 'Online') {
+                emailData.eventLocation = event.location.name;
+            }
+
+            if (event.externalLinks?.additionalInfo) {
+                const infoEntries = Array.from(event.externalLinks.additionalInfo.entries());
+                if (infoEntries.length > 0) {
+                    emailData.additionalInfo = infoEntries
+                        .map(([key, value]) => `${key}: ${value}`)
+                        .join('\n');
+                }
+            }
+
+            const sendEmail = require("../../utils/sendEmail");
+            sendEmail({
+                to: user.email,
+                subject: `Registration Confirmed - ${event.title}`,
+                template: "eventRegistrationConfirmation",
+                data: emailData
+            }).catch(err => console.error("Email send error:", err));
+        } catch (emailErr) {
+            console.error("Registration Email Error:", emailErr);
+        }
+
         return res.status(201).json({
             success: true,
             message: "Event registration successful",

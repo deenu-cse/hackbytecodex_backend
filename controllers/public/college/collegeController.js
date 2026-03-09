@@ -265,6 +265,12 @@ const getCollegeById = async (req, res) => {
                     pipeline: [
                         { $match: { status: "ACTIVE" } },
                         {
+                            $addFields: {
+                                membersCount: { $size: "$members" },
+                                eventsCount: { $size: "$events" }
+                            }
+                        },
+                        {
                             $project: {
                                 name: 1,
                                 code: 1,
@@ -272,6 +278,8 @@ const getCollegeById = async (req, res) => {
                                 description: 1,
                                 performance: 1,
                                 stats: 1,
+                                membersCount: 1,
+                                eventsCount: 1,
                                 createdAt: 1
                             }
                         }
@@ -325,7 +333,7 @@ const getCollegeById = async (req, res) => {
             {
                 $addFields: {
                     clubsCount: { $size: "$clubsData" },
-                    totalMembers: { $sum: "$clubsData.stats.activeMembers" }
+                    totalMembers: { $sum: "$clubsData.membersCount" }
                 }
             },
             {

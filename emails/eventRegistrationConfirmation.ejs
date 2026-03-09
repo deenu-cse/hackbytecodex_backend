@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #f5f7fb; 
+            padding: 20px; 
+        }
+        .card { 
+            background: #ffffff; 
+            padding: 30px; 
+            border-radius: 12px; 
+            max-width: 600px; 
+            margin: auto; 
+        }
+        .header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            padding: 20px; 
+            border-radius: 8px 8px 0 0; 
+            color: #fff; 
+            text-align: center; 
+        }
+        .header h1 { 
+            margin: 0; 
+            font-size: 24px; 
+        }
+        .content { 
+            color: #333333; 
+            line-height: 1.6; 
+        }
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eaeaea;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .btn { 
+            display: inline-block; 
+            padding: 12px 24px; 
+            margin-top: 20px; 
+            background: #667eea; 
+            color: #ffffff; 
+            text-decoration: none; 
+            border-radius: 6px; 
+        }
+        .footer { 
+            margin-top: 30px; 
+            font-size: 12px; 
+            color: #777777; 
+            text-align: center; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <h1>🎉 Registration Confirmed!</h1>
+    </div>
+
+    <div class="content">
+        <p>Hi <strong><%= name %></strong>,</p>
+
+        <p>Your registration for <strong><%= eventName %></strong> has been successfully confirmed!</p>
+
+        <div class="info-box">
+            <div class="detail-row">
+                <span><strong>Event:</strong></span>
+                <span><%= eventName %></span>
+            </div>
+            <div class="detail-row">
+                <span><strong>Date:</strong></span>
+                <span><%= eventDate %></span>
+            </div>
+            <div class="detail-row">
+                <span><strong>Mode:</strong></span>
+                <span><%= eventMode %></span>
+            </div>
+            <% if (paymentStatus && paymentStatus !== 'FREE') { %>
+            <div class="detail-row">
+                <span><strong>Payment Status:</strong></span>
+                <span><%= paymentStatus %></span>
+            </div>
+            <% } %>
+        </div>
+
+        <% if (eventLocation && eventLocation !== 'Online') { %>
+        <p><strong>📍 Location:</strong> <%= eventLocation %></p>
+        <% } %>
+
+        <% if (additionalInfo) { %>
+        <p style="margin-top: 20px;"><strong>Additional Information:</strong></p>
+        <p><%= additionalInfo %></p>
+        <% } %>
+
+        <p style="margin-top: 20px;">We're excited to have you on board! Get ready for an amazing experience.</p>
+
+        <% if (eventLink) { %>
+        <p style="text-align:center;">
+            <a href="<%= eventLink %>" class="btn">View Event Details</a>
+        </p>
+        <% } %>
+
+        <p>If you have any questions, feel free to reach out to the event organizers.</p>
+
+        <p>Best regards,<br>The HackByteCodex Team</p>
+    </div>
+
+    <div class="footer">
+        <p>&copy; <%= new Date().getFullYear() %> HackByteCodex. All rights reserved.</p>
+    </div>
+</div>
+
+</body>
+</html>
