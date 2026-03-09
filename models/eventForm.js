@@ -18,7 +18,14 @@ const eventFormSchema = new mongoose.Schema({
       },
       required: Boolean,
       options: [String], // for SELECT
-      placeholder: String
+     placeholder: String
+    }
+  ],
+
+  instructions: [
+    {
+     heading: String,  
+      points: [String]  
     }
   ]
 

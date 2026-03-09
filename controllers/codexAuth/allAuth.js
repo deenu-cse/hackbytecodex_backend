@@ -205,9 +205,9 @@ const getAllColleges = async (req, res) => {
     try {
         let {
             page = 1,
-            limit = 10,
+            limit = 50,  // Increased default from 10 to 50
             search,
-            status,
+            status,  // Removed default - show all by default
             tier,
             verified,
             sortBy = "createdAt",
@@ -215,14 +215,26 @@ const getAllColleges = async (req, res) => {
             fields
         } = req.query;
 
+        console.log('=== AUTH COLLEGES DEBUG ===');
+        console.log('Query params:', req.query);
+        console.log('Status filter:', status || 'NONE (showing all)');
+
         page = parseInt(page);
-        limit = Math.min(parseInt(limit), 50);
+        limit = Math.min(parseInt(limit), 100);  // Increased max to 100
 
         const skip = (page - 1) * limit;
 
         const filter = {};
 
-        if (status) filter.status = status;
+        // Only apply status if explicitly provided
+        if (status) {
+            filter.status = status;
+            console.log('Applying status filter:', status);
+        }
+        
+        // Log total count
+        const totalBeforeFilters = await College.countDocuments({});
+        console.log('Total colleges in DB:', totalBeforeFilters);
         if (tier) filter["performance.tier"] = tier;
         if (verified !== undefined)
             filter.isVerified = verified === "true";
@@ -258,6 +270,11 @@ const getAllColleges = async (req, res) => {
             College.countDocuments(filter)
 
         ]);
+        
+        console.log('=== AUTH COLLEGES RESULT ===');
+        console.log('Total matching:', total);
+        console.log('Colleges returned:', colleges.length);
+        console.log('First college:', colleges[0]?.name || 'N/A');
 
         res.json({
             success: true,
@@ -299,30 +316,24 @@ const getAllUsers = async (req, res) => {
 
         const filter = {};
 
-        // Search by name or email
         if (search) {
             filter.$or = [
                 { fullName: { $regex: search, $options: "i" } },
                 { email: { $regex: search, $options: "i" } }
             ];
         }
-
-        // Filter by role
         if (role && Object.values(USER_TYPE).includes(role)) {
             filter.role = role;
         }
 
-        // Filter by college
         if (collegeId) {
             filter["college.collegeId"] = collegeId;
         }
 
-        // Filter by verification status
         if (verified !== undefined) {
             filter.isVerified = verified === "true";
         }
 
-        // Filter by account status
         if (status) {
             filter.status = status;
         }

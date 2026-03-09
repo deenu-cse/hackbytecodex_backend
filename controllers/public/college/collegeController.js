@@ -10,7 +10,7 @@ const getAllColleges = async (req, res) => {
     try {
         let {
             page = 1,
-            limit = 12,
+            limit = 50,  
             search,
             city,
             state,
@@ -19,7 +19,7 @@ const getAllColleges = async (req, res) => {
             minScore,
             maxScore,
             minRating,
-            status = "ACTIVE",
+            status,  
             hasClubs,
             isVerified,
             sortBy = "performance.score",
@@ -27,6 +27,10 @@ const getAllColleges = async (req, res) => {
             fields
         } = req.query;
 
+        console.log('=== GET ALL COLLEGES DEBUG ===');
+        console.log('Query params:', req.query);
+        console.log('Status filter:', status);
+        
         page = Math.max(1, parseInt(page));
         limit = Math.min(50, Math.max(1, parseInt(limit)));
         const skip = (page - 1) * limit;
@@ -35,7 +39,11 @@ const getAllColleges = async (req, res) => {
 
         if (status) {
             match.status = status;
+            console.log('Applying status filter:', status);
         }
+        
+        const totalBeforeFilters = await College.countDocuments({});
+        console.log('Total colleges in DB (all statuses):', totalBeforeFilters);
 
         if (isVerified !== undefined) {
             match.isVerified = isVerified === "true";
@@ -50,9 +58,9 @@ const getAllColleges = async (req, res) => {
         if (state) {
             match["address.state"] = { $regex: state, $options: "i" };
         }
-        if (country && country !== "all") {
-            match["address.country"] = { $regex: country, $options: "i" };
-        }
+        // if (country && country !== "all") {
+        //     match["address.country"] = { $regex: country, $options: "i" };
+        // }
 
         if (tier) {
             match["performance.tier"] = tier.toUpperCase();
@@ -201,6 +209,12 @@ const getAllColleges = async (req, res) => {
 
         const result = colleges[0];
         const total = result.totalCount[0]?.count || 0;
+        
+        console.log('=== RESULT DEBUG ===');
+        console.log('Total matching colleges:', total);
+        console.log('Colleges returned in this page:', result.data.length);
+        console.log('First college name:', result.data[0]?.name || 'N/A');
+        console.log('Match filters applied:', JSON.stringify(match));
 
         const filters = {
             cities: result.cities.map(c => ({ name: c._id, count: c.count })),

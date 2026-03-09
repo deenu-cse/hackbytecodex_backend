@@ -693,7 +693,10 @@ const getEventById = async (req, res) => {
 
       Event.findById(eventId)
         .populate("createdBy", "fullName email avatar")
-        .populate("form", "fields")
+        .populate({
+          path: "form",
+          select: "fields instructions"  
+        })
         .lean(),
 
       EventRegistration.aggregate([
@@ -1060,153 +1063,158 @@ const getEventRegistrations = async (req, res) => {
 };
 
 const createEventForm = async (req, res) => {
-    try {
-        const { eventId } = req.params;
-        const { fields } = req.body;
+  try {
+   const { eventId } = req.params;
+   const { fields, instructions } = req.body;
 
-        if (!eventId) {
-            return res.status(400).json({
-                success: false,
-                message: "Event ID is required"
-            });
-        }
-
-        if (!fields || !Array.isArray(fields)) {
-            return res.status(400).json({
-                success: false,
-                message: "Fields array is required"
-            });
-        }
-
-        const event = await Event.findById(eventId);
-
-        if (!event) {
-            return res.status(404).json({
-                success: false,
-                message: "Event not found"
-            });
-        }
-
-        const form = await EventForm.findOneAndUpdate(
-            { event: eventId },
-            { event: eventId, fields },
-            { new: true, upsert: true }
-        );
-
-        // Update the event's form reference
-        event.form = form._id;
-        await event.save();
-
-        // Populate and return the form with event details
-        const populatedForm = await EventForm.findById(form._id);
-
-        return res.status(201).json({
-            success: true,
-            message: "Event form created successfully",
-            data: populatedForm,
-            event: await Event.findById(eventId).populate('form')
-        });
-
-    } catch (err) {
-        console.error("Create Event Form Error:", err);
-        return res.status(500).json({
-            success: false,
-            message: "Server error while creating event form",
-            error: err.message
-        });
+    if (!eventId) {
+     return res.status(400).json({
+        success: false,
+       message: "Event ID is required"
+      });
     }
+
+    if (!fields || !Array.isArray(fields)) {
+     return res.status(400).json({
+        success: false,
+       message: "Fields array is required"
+      });
+    }
+
+   const event = await Event.findById(eventId);
+
+    if (!event) {
+     return res.status(404).json({
+        success: false,
+       message: "Event not found"
+      });
+    }
+
+   const form = await EventForm.findOneAndUpdate(
+      { event: eventId },
+      { 
+        event: eventId, 
+       fields,
+        instructions: instructions || []
+      },
+      { new: true, upsert: true }
+    );
+
+    event.form = form._id;
+    await event.save();
+
+   const populatedForm = await EventForm.findById(form._id);
+
+   return res.status(201).json({
+      success: true,
+     message: "Event form created successfully",
+      data: populatedForm,
+      event: await Event.findById(eventId).populate('form')
+    });
+
+  } catch(err) {
+   console.error("Create Event Form Error:", err);
+   return res.status(500).json({
+      success: false,
+     message: "Server error while creating event form",
+      error: err.message
+    });
+  }
 };
 
 const updateEventForm = async (req, res) => {
-    try {
+  try {
 
-        const { eventId } = req.params;
-        const { fields } = req.body;
+   const { eventId } = req.params;
+   const { fields, instructions } = req.body;
 
-        if (!eventId) {
-            return res.status(400).json({
-                success: false,
-                message: "Event ID is required"
-            });
-        }
-
-        if (!fields || !Array.isArray(fields)) {
-            return res.status(400).json({
-                success: false,
-                message: "Fields array is required"
-            });
-        }
-
-        const form = await EventForm.findOneAndUpdate(
-            { event: eventId },
-            { fields },
-            { new: true }
-        );
-
-        if (!form) {
-            return res.status(404).json({
-                success: false,
-                message: "Event form not found"
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: "Event form updated successfully",
-            data: form
-        });
-
-    } catch (err) {
-        console.error("Update Event Form Error:", err);
-        return res.status(500).json({
-            success: false,
-            message: "Server error while updating event form",
-            error: err.message
-        });
+    if (!eventId) {
+     return res.status(400).json({
+        success: false,
+       message: "Event ID is required"
+      });
     }
+
+    if (!fields || !Array.isArray(fields)) {
+     return res.status(400).json({
+        success: false,
+       message: "Fields array is required"
+      });
+    }
+
+   const form = await EventForm.findOneAndUpdate(
+      { event: eventId },
+      { 
+       fields,
+        instructions: instructions || []
+      },
+      { new: true }
+    );
+
+    if (!form) {
+     return res.status(404).json({
+        success: false,
+       message: "Event form not found"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Event form updated successfully",
+      data: form
+    });
+
+  } catch (err) {
+    console.error("Update Event Form Error:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while updating event form",
+      error: err.message
+    });
+  }
 };
 
 const deleteEventForm = async (req, res) => {
-    try {
+  try {
 
-        const { eventId } = req.params;
+    const { eventId } = req.params;
 
-        if (!eventId) {
-            return res.status(400).json({
-                success: false,
-                message: "Event ID is required"
-            });
-        }
-
-        const form = await EventForm.findOneAndDelete({
-            event: eventId
-        });
-
-        if (!form) {
-            return res.status(404).json({
-                success: false,
-                message: "Event form not found"
-            });
-        }
-
-        await Event.findByIdAndUpdate(
-            eventId,
-            { $unset: { form: "" } }
-        );
-
-        return res.status(200).json({
-            success: true,
-            message: "Event form deleted successfully"
-        });
-
-    } catch (err) {
-        console.error("Delete Event Form Error:", err);
-        return res.status(500).json({
-            success: false,
-            message: "Server error while deleting event form",
-            error: err.message
-        });
+    if (!eventId) {
+      return res.status(400).json({
+        success: false,
+        message: "Event ID is required"
+      });
     }
+
+    const form = await EventForm.findOneAndDelete({
+      event: eventId
+    });
+
+    if (!form) {
+      return res.status(404).json({
+        success: false,
+        message: "Event form not found"
+      });
+    }
+
+    await Event.findByIdAndUpdate(
+      eventId,
+      { $unset: { form: "" } }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Event form deleted successfully"
+    });
+
+  } catch (err) {
+    console.error("Delete Event Form Error:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while deleting event form",
+      error: err.message
+    });
+  }
 };
 
 const markAttendance = async (req, res) => {
