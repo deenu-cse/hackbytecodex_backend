@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #f5f7fb; 
+            padding: 20px; 
+        }
+        .card { 
+            background: #ffffff; 
+            padding: 30px; 
+            border-radius: 12px; 
+            max-width: 600px; 
+            margin: auto; 
+        }
+        .header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            padding: 20px; 
+            border-radius: 8px 8px 0 0; 
+            color: #fff; 
+            text-align: center; 
+        }
+        .header h1 { 
+            margin: 0; 
+            font-size: 24px; 
+        }
+        .content { 
+            color: #333333; 
+            line-height: 1.6; 
+        }
+        .credentials-box {
+            background: #f0f4ff;
+            border: 2px dashed #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .password {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            letter-spacing: 2px;
+            margin: 10px 0;
+        }
+        .btn { 
+            display: inline-block; 
+            padding: 12px 24px; 
+            margin-top: 20px; 
+            background: #667eea; 
+            color: #ffffff; 
+            text-decoration: none; 
+            border-radius: 6px; 
+        }
+        .footer { 
+            margin-top: 30px; 
+            font-size: 12px; 
+            color: #777777; 
+            text-align: center; 
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <h1>🎉 Welcome to HackByteCodex!</h1>
+    </div>
+
+    <div class="content">
+        <p>Hi <strong><%= name %></strong>,</p>
+
+        <p>Welcome to the HackByteCodex community! Your account has been automatically created because you registered for <strong><%= eventName %></strong>.</p>
+
+        <div class="credentials-box">
+            <p><strong>Your Login Credentials:</strong></p>
+            <p style="margin: 5px 0;">Email: <strong><%= email %></strong></p>
+            <p style="margin: 5px 0;">Password:</p>
+            <div class="password"><%= password %></div>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Important:</strong> Please save this password or change it immediately after logging in for security reasons.
+        </div>
+
+        <p style="text-align:center;">
+            <a href="<%= loginUrl %>" class="btn">Login to Your Account</a>
+        </p>
+
+        <p>With your new account, you can:</p>
+        <ul>
+            <li>Register for more events and hackathons</li>
+            <li>Track your event participation</li>
+            <li>Earn reward points</li>
+            <li>Connect with other students</li>
+        </ul>
+
+        <p>If you have any questions, feel free to reach out to our support team.</p>
+
+        <p>Best regards,<br>The HackByteCodex Team</p>
+    </div>
+
+    <div class="footer">
+        <p>&copy; <%= new Date().getFullYear() %> HackByteCodex. All rights reserved.</p>
+    </div>
+</div>
+
+</body>
+</html>

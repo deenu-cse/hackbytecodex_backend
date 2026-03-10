@@ -46,6 +46,14 @@
         .detail-row:last-child {
             border-bottom: none;
         }
+        .new-user-banner {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
         .btn { 
             display: inline-block; 
             padding: 12px 24px; 
@@ -71,6 +79,13 @@
     </div>
 
     <div class="content">
+        <% if (isNewUser) { %>
+        <div class="new-user-banner">
+            <strong>🌟 Welcome to HackByteCodex!</strong><br>
+            <small>Your account has been created. Check your inbox for login credentials.</small>
+        </div>
+        <% } %>
+
         <p>Hi <strong><%= name %></strong>,</p>
 
         <p>Your registration for <strong><%= eventName %></strong> has been successfully confirmed!</p>

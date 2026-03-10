@@ -26,7 +26,7 @@ router.get(
 
 router.post(
   "/register/:slug",
-  verifyToken(),
+//   verifyToken(),
   uploadEventFiles, 
   registerForEvent
 );
