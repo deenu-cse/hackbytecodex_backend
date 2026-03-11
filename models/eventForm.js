@@ -10,21 +10,27 @@ const eventFormSchema = new mongoose.Schema({
 
   fields: [
     {
-      label: String, // "GitHub URL"
-      name: String,  // "github"
+      label: String, 
+      name: String,  
       type: {
         type: String,
-        enum: ["TEXT", "EMAIL", "NUMBER", "SELECT", "FILE", "CHECKBOX"]
+        enum: ["TEXT", "EMAIL", "NUMBER", "SELECT", "FILE", "CHECKBOX", "DATE"] 
       },
       required: Boolean,
-      options: [String], // for SELECT
-     placeholder: String
+      options: [String],
+      placeholder: String,
+      minDate: String, 
+      maxDate: String, 
+      dateFormat: {   
+        type: String,
+        default: "YYYY-MM-DD"
+      }
     }
   ],
 
   instructions: [
     {
-     heading: String,  
+      heading: String,  
       points: [String]  
     }
   ]
