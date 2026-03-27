@@ -22,6 +22,7 @@ app.use(cors({
         'http://localhost:3002',
         'https://hackbytecodex.vercel.app',
         'https://dashboardhackbytecodex.vercel.app',
+        'https://panel.hackbytecodex.com',
         'https://www.hackbytecodex.com',
         'https://hackbytecodex.com',
         process.env.PLATFORM_DASHBOARD_URL,
