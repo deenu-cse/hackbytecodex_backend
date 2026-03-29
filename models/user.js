@@ -29,6 +29,33 @@ const userSchema = new mongoose.Schema({
     select: false
   },
 
+  // ===== GOOGLE OAUTH =====
+  googleId: {
+    type: String,
+    sparse: true
+  },
+
+  authProvider: {
+    type: String,
+    enum: ["local", "google"],
+    default: "local"
+  },
+
+  hasSetPassword: {
+    type: Boolean,
+    default: false
+  },
+
+  passwordSetupToken: {
+    type: String,
+    select: false
+  },
+
+  passwordSetupTokenExpiry: {
+    type: Date,
+    select: false
+  },
+
   // ===== ROLE & ACCESS =====
   role: {
     type: String,

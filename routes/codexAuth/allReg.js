@@ -1,5 +1,6 @@
 const express = require('express');
 const { codexReg, getMe, login, getAllColleges, getAllUsers } = require('../../controllers/codexAuth/allAuth');
+const { googleLogin, googleCallback, setPassword, verifySetupToken } = require('../../controllers/codexAuth/googleAuth');
 const router = express.Router();
 const { verifyToken } = require('../../middlewares/authMiddlewares/verifyToken')
 const sendEmail = require('../../utils/sendEmail')
@@ -21,6 +22,12 @@ router.get(
     verifyToken([USER_TYPE.SUPER_ADMIN]),
     getAllUsers
 );
+
+// ===== GOOGLE OAUTH ROUTES =====
+router.get('/google', googleLogin);
+router.get('/google/callback', googleCallback);
+router.post('/set-password', setPassword);
+router.get('/verify-setup-token', verifySetupToken);
 
 router.post('/colleges/request', async (req, res) => {
     try {
