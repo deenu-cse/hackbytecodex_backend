@@ -176,7 +176,7 @@ const getMe = async (req, res) => {
     try {
         const user = await User.findById(req.user.id)
             .populate("college.collegeId", "name logo location code")
-            .populate("clubs.clubId", "name logo");
+            .populate("clubs.clubId", "name logo code");
 
         if (!user) {
             return res.status(404).json({

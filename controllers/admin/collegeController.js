@@ -237,15 +237,25 @@ const getUsersByCollege = async (req, res) => {
 
     const { collegeId } = req.params;
 
-    let { page = 1, limit = 50, search = "" } = req.query;
+    let { page = 1, limit = 50, search = "", role = "" } = req.query;
 
     page = Number(page);
     limit = Number(limit);
 
     const query = {
       "college.collegeId": collegeId,
-      fullName: { $regex: search, $options: "i" }
     };
+
+    if (search) {
+      query.$or = [
+        { fullName: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } }
+      ];
+    }
+
+    if (role) {
+      query.role = role;
+    }
 
     const users = await User.find(query)
       .select("-password")
