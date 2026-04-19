@@ -1,5 +1,6 @@
 const express = require('express');
 const { getAllEvents, getEventBySlug, registerForEvent, getEventForm } = require('../../../controllers/public/events/eventsController');
+const { rateEvent, getUserRating, getEventRatings, deleteUserRating } = require('../../../controllers/public/events/ratingController');
 const { verifyToken } = require('../../../middlewares/authMiddlewares/verifyToken');
 const { USER_TYPE } = require('../../../constants/allConstant');
 const router = express.Router();
@@ -27,8 +28,32 @@ router.get(
 router.post(
   "/register/:slug",
 //   verifyToken(),
-  uploadEventFiles, 
+  uploadEventFiles,
   registerForEvent
+);
+
+// Rating routes
+router.post(
+    "/:eventId/rate",
+    verifyToken(),
+    rateEvent
+);
+
+router.get(
+    "/:eventId/ratings",
+    getEventRatings
+);
+
+router.get(
+    "/:eventId/my-rating",
+    verifyToken(),
+    getUserRating
+);
+
+router.delete(
+    "/:eventId/rate",
+    verifyToken(),
+    deleteUserRating
 );
 
 module.exports = router;

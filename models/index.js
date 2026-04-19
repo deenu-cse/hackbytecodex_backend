@@ -1,6 +1,15 @@
 require("./user");
 require("./college");
 require("./club");
+require("./event");
+require("./eventForm");
+require("./eventRegistration");
+require("./judge");
+require("./project");
+require("./projectLike");
+require("./projectView");
+require("./score");
+require("./eventRating");
 
 require("./api/ApiKey");
 require("./api/Subscription");

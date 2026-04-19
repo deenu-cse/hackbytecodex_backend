@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= subject %></title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .email-container {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .content {
+            padding: 40px;
+        }
+        .greeting {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        .message {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #4a5568;
+            margin-bottom: 30px;
+        }
+        .message p {
+            margin: 0 0 16px 0;
+        }
+        .message p:last-child {
+            margin-bottom: 0;
+        }
+        .footer {
+            background-color: #f7fafc;
+            padding: 30px 40px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .footer-text {
+            color: #718096;
+            font-size: 14px;
+            margin: 0;
+        }
+        .brand {
+            color: #667eea;
+            font-weight: 600;
+        }
+        .highlight {
+            background-color: #ebf8ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 20px 0;
+            transition: transform 0.2s ease;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .header, .content, .footer {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1><%= subject %></h1>
+        </div>
+
+        <div class="content">
+            <div class="greeting">
+                Hi <%= recipientName %>,
+            </div>
+
+            <div class="message">
+                <% if (typeof htmlContent !== 'undefined' && htmlContent) { %>
+                    <%- htmlContent %>
+                <% } else { %>
+                    <p><%= message %></p>
+                <% } %>
+            </div>
+
+            <div class="highlight">
+                <p><strong>This is an important message from HackByteCodex Administration.</strong></p>
+                <p>If you have any questions, please don't hesitate to reach out to our support team.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="footer-text">
+                Best regards,<br>
+                <span class="brand">HackByteCodex Team</span>
+            </p>
+            <p class="footer-text" style="margin-top: 10px;">
+                © 2026 HackByteCodex. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
