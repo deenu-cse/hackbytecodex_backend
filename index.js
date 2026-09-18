@@ -26,6 +26,8 @@ app.use(cors({
             'https://panel.hackbytecodex.com',
             'https://www.hackbytecodex.com',
             'https://hackbytecodex.com',
+            'https://gkv.hackbytecodex.com',
+            'https://www.gkv.hackbytecodex.com'
             process.env.PLATFORM_DASHBOARD_URL,
             process.env.JUDGE_PANEL_URL
         ].filter(Boolean);
